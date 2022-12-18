@@ -3,6 +3,18 @@ import axios from '../api/axios';
 import MovieModal from './MovieModal';
 import "./Row.css";
 
+// import Swiper core and required modules
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper';
+
+import { Swiper, SwiperSlide } from 'swiper/react';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+
+
 export default function Row({ isLargeRow, title, id, fetchUrl}) {
 
     const [movies, setMovies] = useState([]);
@@ -29,14 +41,36 @@ export default function Row({ isLargeRow, title, id, fetchUrl}) {
   return (
     <section className='row'>
         <h2>{title}</h2>
-        <div className='slider'>
-            <div className='slider__arrow-left'>
-                <span className='arrow' onClick={()=> {
-                    document.getElementById(id).scrollLeft -= window.innerWidth - 80;
-                }}>{"<"}</span>
-            </div>
+        <Swiper
+            // install Swiper modules
+            modules={[Navigation, Pagination, Scrollbar, A11y]}
+            navigation
+            pagination={{ clickable: true }}
+            onSwiper={(swiper) => console.log(swiper)}
+            loop = {true}
+            breakpoints={{
+                1378: {
+                    slidesPerView: 6,
+                    slidesPerView: 6,
+                },
+                998 : { 
+                    slidesPerView: 5,
+                    slidesPerView: 5,
+                },
+                625 : { 
+                    slidesPerView: 4,
+                    slidesPerView: 4,
+                },
+                0 : { 
+                    slidesPerView: 3,
+                    slidesPerView: 3,
+                }
+            }}
+            >
+        
                 <div id={id} className="row__posters">
                     {movies.map(movie =>(
+                        <SwiperSlide>
                         <img
                             key={movie.id}
                             className={`row_poster ${isLargeRow && "row__posterLarge"}`}
@@ -44,15 +78,10 @@ export default function Row({ isLargeRow, title, id, fetchUrl}) {
                             alt={movie.name}
                             onClick={()=> handleClick(movie)}
                         />
+                        </SwiperSlide>
                     ))}
                 </div>
-            <div className='slider__arrow-right'>
-                <span className='arrow' onClick={()=> {
-                    document.getElementById(id).scrollLeft += window.innerWidth - 80;
-                }}>{">"}</span>
-            </div>
-        </div>
-
+            </Swiper>
         {
             modalOpen && (
                 <MovieModal {...movieSelected} setModalOpen={setModalOpen}/>
